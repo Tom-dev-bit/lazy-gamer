@@ -1,0 +1,39 @@
+# lazy-gamer
+
+## How to Use
+
+> **First time only:** Install Git manually, then clone this repo.
+
+```powershell
+winget install Git.Git --silent --accept-package-agreements --accept-source-agreements
+git clone https://github.com/Tom-dev-bit/lazy-gamer.git
+cd lazy-gamer
+```
+
+Then double-click **`run.bat`** and follow the prompts.
+
+That's it.
+
+---
+
+## What is this?
+
+A PowerShell script that installs all your essential Windows applications in one shot — no hunting down 20 websites, no clicking download buttons.
+
+After a fresh Windows install, you clone this repo, run one file, answer a few yes/no questions, and everything is set up.
+
+---
+
+## What gets installed
+
+**Always installed:**
+- Google Chrome
+- Discord
+- Steam
+- VLC
+
+**Asked during setup:**
+- qBittorrent — only if you torrent
+- Battle.net — only if you play Blizzard games ⚠️ may prompt you to choose an install directory manually
+  - CurseForge — only if you play World of Warcraft
+- VS Code, Node.js, Windows Terminal, WSL2 — only if you're a developer

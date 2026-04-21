@@ -47,6 +47,7 @@ if (Ask "Do you torrent? (qBittorrent)") {
 
 # ── Optional: Blizzard 
 if (Ask "Do you play Blizzard games? (Battle.net)") {
+    Write-Host "`nNote: Battle.net may open a window asking you to choose an install directory." -ForegroundColor Yellow
     Install-App -Name "Battle.net" -Id "Blizzard.BattleNet"
 
     if (Ask "Do you play World of Warcraft? (CurseForge)") {
@@ -58,7 +59,6 @@ if (Ask "Do you play Blizzard games? (Battle.net)") {
 if (Ask "Are you a developer?") {
     Install-App -Name "VS Code"           -Id "Microsoft.VisualStudioCode"
     Install-App -Name "Node.js"           -Id "OpenJS.NodeJS.LTS"
-    Install-App -Name "Git"               -Id "Git.Git"
     Install-App -Name "Windows Terminal"  -Id "Microsoft.WindowsTerminal"
 
     if (Ask "Do you want WSL2 (Linux shell inside Windows)?") {
