@@ -9,7 +9,8 @@ if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
-# ── Helper
+# ── Helpers ──────────────────────────────────────────────────
+
 function Install-App {
     param (
         [string]$Name,
@@ -19,11 +20,53 @@ function Install-App {
     winget install --id $Id --silent --accept-package-agreements --accept-source-agreements
 }
 
-# ── Apps 
+function Ask {
+    param([string]$Question)
+    $answer = Read-Host "`n$Question (y/n)"
+    return $answer -eq 'y' -or $answer -eq 'yes'
+}
+
+# ── Basic Apps (always installed) ────────────────────────────
 
 # 🌐 Browser
-Install-App -Name "Google Chrome" -Id "Google.Chrome"
+Install-App -Name "Google Chrome"  -Id "Google.Chrome"
 
+# 💬 Communication
+Install-App -Name "Discord"        -Id "Discord.Discord"
+
+# 🎮 Gaming
+Install-App -Name "Steam"          -Id "Valve.Steam"
+
+# 🎵 Media
+Install-App -Name "VLC"            -Id "VideoLAN.VLC"
+
+# 🔧 Utilities
+if (Ask "Do you torrent? (qBittorrent)") {
+    Install-App -Name "qBittorrent" -Id "qBittorrent.qBittorrent"
+}
+
+# ── Optional: Blizzard 
+if (Ask "Do you play Blizzard games? (Battle.net)") {
+    Install-App -Name "Battle.net" -Id "Blizzard.BattleNet"
+
+    if (Ask "Do you play World of Warcraft? (CurseForge)") {
+        Install-App -Name "CurseForge" -Id "Overwolf.CurseForge"
+    }
+}
+
+# ── Optional: Developer Tools 
+if (Ask "Are you a developer?") {
+    Install-App -Name "VS Code"           -Id "Microsoft.VisualStudioCode"
+    Install-App -Name "Node.js"           -Id "OpenJS.NodeJS.LTS"
+    Install-App -Name "Git"               -Id "Git.Git"
+    Install-App -Name "Windows Terminal"  -Id "Microsoft.WindowsTerminal"
+
+    if (Ask "Do you want WSL2 (Linux shell inside Windows)?") {
+        Write-Host "`nInstalling WSL2 (this may take a few minutes)..." -ForegroundColor Cyan
+        wsl --install
+        Write-Host "WSL2 installed. A restart will be required to complete setup." -ForegroundColor Yellow
+    }
+}
 
 # ─────────────────────────────────────────────────────────────
 Write-Host "`nAll done! You may need to restart for some changes to take effect." -ForegroundColor Green
