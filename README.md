@@ -9,6 +9,7 @@
 
 ```powershell
 winget install Git.Git --silent --accept-package-agreements --accept-source-agreements
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 git clone https://github.com/Tom-dev-bit/lazy-gamer.git
 cd lazy-gamer
 ```
