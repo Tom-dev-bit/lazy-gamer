@@ -16,8 +16,14 @@ function Install-App {
         [string]$Name,
         [string]$Id
     )
-    Write-Host "`nInstalling $Name..." -ForegroundColor Cyan
-    winget install --id $Id --silent --accept-package-agreements --accept-source-agreements
+    $installed = winget list --id $Id --exact --accept-source-agreements 2>$null | Select-String $Id
+    if ($installed) {
+        Write-Host "`n$Name is already installed, checking for updates..." -ForegroundColor DarkCyan
+        winget upgrade --id $Id --silent --accept-package-agreements --accept-source-agreements
+    } else {
+        Write-Host "`nInstalling $Name..." -ForegroundColor Cyan
+        winget install --id $Id --silent --accept-package-agreements --accept-source-agreements
+    }
 }
 
 function Ask {

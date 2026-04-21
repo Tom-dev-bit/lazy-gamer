@@ -4,13 +4,16 @@
 
 > **First time only:** Install Git manually, then clone this repo.
 
+1. Open the **Start menu**, search for **Terminal** and open it
+2. Run these commands:
+
 ```powershell
 winget install Git.Git --silent --accept-package-agreements --accept-source-agreements
 git clone https://github.com/Tom-dev-bit/lazy-gamer.git
 cd lazy-gamer
 ```
 
-Then double-click **`run.bat`** and follow the prompts.
+3. Then double-click **`run.bat`** and follow the prompts.
 
 That's it.
 
