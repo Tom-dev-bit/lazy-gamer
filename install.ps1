@@ -18,6 +18,12 @@ function Install-App {
     )
     Write-Host "`nInstalling $Name..." -ForegroundColor Cyan
     winget install --id $Id --silent --accept-package-agreements --accept-source-agreements 2>$null
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "  Skipped $Name (canceled or already installed)." -ForegroundColor DarkYellow
+        # Kill any stuck winget or msiexec processes left by a canceled install
+        Get-Process -Name "winget","msiexec" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+    }
 }
 
 function Ask {
