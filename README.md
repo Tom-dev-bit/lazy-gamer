@@ -13,8 +13,11 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 git clone https://github.com/Tom-dev-bit/lazy-gamer.git
 You can close the terminal window.
 ```
-3. Navigate to the "lazy-gamer" folder it should be at /Users/yourusername
-4. Then double-click **`run.bat`** and follow the prompts.
+3. Navigate to the **lazy-gamer** folder (should be at `C:\Users\yourusername\lazy-gamer`)
+4. Double-click **`START.vbs`** and choose your installation method:
+   - **[1] Chocolatey** — recommended, more reliable
+   - **[2] winget** — built into Windows, no extra installs needed
+5. Follow the prompts.
 
 That's it.
 
@@ -25,6 +28,17 @@ That's it.
 A PowerShell script that installs all your essential Windows applications in one shot — no hunting down 20 websites, no clicking download buttons.
 
 After a fresh Windows install, you clone this repo, run one file, answer a few yes/no questions, and everything is set up.
+
+---
+
+## Installation methods
+
+### Chocolatey (recommended)
+Uses [Chocolatey](https://chocolatey.org/) as the package manager. Bootstrapped automatically — no manual install needed. More reliable cancel handling: if you cancel an installer mid-way, the script skips cleanly and continues with the next app.
+
+### winget
+Uses the built-in Windows Package Manager. No extra software needed.
+> ⚠️ **Note:** Cancelling an application's own installer window mid-way (e.g. Battle.net) may corrupt winget's process state and cause subsequent installs to fail with a "process has no package identity" error. If this happens, close the terminal and re-run `run.bat`.
 
 ---
 

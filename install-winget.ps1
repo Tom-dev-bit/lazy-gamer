@@ -35,12 +35,7 @@ function Install-App {
         # Kill anything that could leave locks and corrupt subsequent winget calls
         Get-Process -Name "winget","msiexec","Battle.net","Agent","BlizzardError" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
     } else {
-        # Verify the app actually installed — some installers cancel silently with exit code 0
-        winget list --id $Id --exact --accept-source-agreements 2>$null | Out-Null
-        if ($LASTEXITCODE -ne 0) {
-            Write-Host "  $Name installation was cancelled. Skipping." -ForegroundColor DarkYellow
-            Get-Process -Name "winget","msiexec","Battle.net","Agent","BlizzardError" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-        }
+        # Exit code 0 = success, nothing to do
     }
 
     Remove-Item $errFile -ErrorAction SilentlyContinue
