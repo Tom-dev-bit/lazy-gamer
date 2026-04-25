@@ -86,9 +86,10 @@ if (Ask "Do you play Blizzard games? (Battle.net)") {
         Write-Host "Running Battle.net installer..." -ForegroundColor Cyan
         Start-Process -FilePath $bnetInstaller -Wait
         $exitCode = $LASTEXITCODE
+        # Always kill lingering Blizzard child processes — they outlive the bootstrapper
+        Get-Process -Name "Battle.net","Agent","BlizzardError","msiexec" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
         if ($exitCode -ne 0) {
             Write-Host "  Battle.net was skipped." -ForegroundColor DarkYellow
-            Get-Process -Name "Battle.net","Agent","BlizzardError","msiexec" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
         }
     } catch {
         Write-Host "  Failed to download Battle.net installer. Please install it manually from https://www.battle.net" -ForegroundColor Red
@@ -100,9 +101,11 @@ if (Ask "Do you play Blizzard games? (Battle.net)") {
         Write-Host "`nDownloading CurseForge installer..." -ForegroundColor Cyan
         $curseInstaller = "$env:TEMP\CurseForgeSetup.exe"
         try {
-            Invoke-WebRequest -Uri "https://curseforge.overwolf.com/downloads/curseforge-latest-installer.exe" -OutFile $curseInstaller -UseBasicParsing
+            Invoke-WebRequest -Uri "https://curseforge.overwolf.com/downloads/curseforge-latest-installer.exe" -OutFile $curseInstaller -UseBasicParsing -UserAgent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
             Start-Process -FilePath $curseInstaller -Wait
             $exitCode = $LASTEXITCODE
+            # Kill any lingering Overwolf child processes
+            Get-Process -Name "CurseForge","OverwolfLauncher","Overwolf","msiexec" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
             if ($exitCode -ne 0) {
                 Write-Host "  CurseForge was skipped." -ForegroundColor DarkYellow
             }
@@ -129,3 +132,10 @@ if (Ask "Are you a developer?") {
 
 # ─────────────────────────────────────────────────────────────
 Write-Host "`nAll done! You may need to restart for some changes to take effect." -ForegroundColor Green
+
+$seconds = 10
+for ($i = $seconds; $i -gt 0; $i--) {
+    Write-Host "`r  This window will close in $i second(s)..." -NoNewline -ForegroundColor DarkGray
+    Start-Sleep -Seconds 1
+}
+Write-Host ""
