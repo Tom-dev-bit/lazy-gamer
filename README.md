@@ -11,10 +11,10 @@
 winget install Git.Git --silent --accept-package-agreements --accept-source-agreements
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 git clone https://github.com/Tom-dev-bit/lazy-gamer.git
-cd lazy-gamer
+You can close the terminal window.
 ```
-
-3. Then double-click **`run.bat`** and follow the prompts.
+3. Navigate to the "lazy-gamer" folder it should be at /Users/yourusername
+4. Then double-click **`run.bat`** and follow the prompts.
 
 That's it.
 
@@ -35,6 +35,7 @@ After a fresh Windows install, you clone this repo, run one file, answer a few y
 - Discord
 - Steam
 - VLC
+- 7-Zip
 
 **Asked during setup:**
 - qBittorrent — only if you torrent

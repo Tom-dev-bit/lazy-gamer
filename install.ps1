@@ -3,6 +3,13 @@
 #  Run with: powershell -ExecutionPolicy Bypass -File install.ps1
 # ============================================================
 
+# Ensure running as Administrator
+$currentPrincipal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
+if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Error "This script must be run as Administrator. Please re-run using run.bat or an elevated PowerShell session."
+    exit 1
+}
+
 # Ensure winget is available
 if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
     Write-Error "winget is not available. Make sure you're on Windows 10/11 with App Installer installed."
@@ -17,13 +24,27 @@ function Install-App {
         [string]$Id
     )
     Write-Host "`nInstalling $Name..." -ForegroundColor Cyan
-    winget install --id $Id --silent --accept-package-agreements --accept-source-agreements 2>$null
+    $errFile = [System.IO.Path]::GetTempFileName()
+    winget install --id $Id --silent --accept-package-agreements --accept-source-agreements 2>$errFile
+    $exitCode = $LASTEXITCODE
 
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "  Skipped $Name (canceled or already installed)." -ForegroundColor DarkYellow
-        # Kill any stuck winget or msiexec processes left by a canceled install
+    if ($exitCode -eq -1978335189) {
+        Write-Host "  $Name is already installed, skipping." -ForegroundColor DarkYellow
+    } elseif ($exitCode -ne 0) {
+        # Non-zero usually means the user cancelled the installer dialog — just skip cleanly
+        Write-Host "  $Name was skipped." -ForegroundColor DarkYellow
         Get-Process -Name "winget","msiexec" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+    } else {
+        # Exit code 0 doesn't always mean success — verify the app is actually present
+        # (clicking Cancel inside an installer dialog returns 0 to winget)
+        winget list --id $Id --exact --accept-source-agreements 2>$null | Out-Null
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "  $Name installation was cancelled. Skipping." -ForegroundColor DarkYellow
+            Get-Process -Name "winget","msiexec" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+        }
     }
+
+    Remove-Item $errFile -ErrorAction SilentlyContinue
 }
 
 function Ask {
@@ -47,6 +68,8 @@ Install-App -Name "Steam"          -Id "Valve.Steam"
 Install-App -Name "VLC"            -Id "VideoLAN.VLC"
 
 # 🔧 Utilities
+Install-App -Name "7-Zip"          -Id "7zip.7zip"
+
 if (Ask "Do you torrent? (qBittorrent)") {
     Install-App -Name "qBittorrent" -Id "qBittorrent.qBittorrent"
 }
