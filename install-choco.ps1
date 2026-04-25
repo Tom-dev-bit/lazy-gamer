@@ -108,7 +108,7 @@ if (Ask "Are you a developer?") {
 # ─────────────────────────────────────────────────────────────
 Write-Host "`nAll done! You may need to restart for some changes to take effect." -ForegroundColor Green
 
-$seconds = 10
+$seconds = 5
 for ($i = $seconds; $i -gt 0; $i--) {
     Write-Host "`r  This window will close in $i second(s)..." -NoNewline -ForegroundColor DarkGray
     Start-Sleep -Seconds 1
