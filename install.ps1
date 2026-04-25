@@ -25,8 +25,12 @@ function Install-App {
     )
     Write-Host "`nInstalling $Name..." -ForegroundColor Cyan
     $errFile = [System.IO.Path]::GetTempFileName()
-    winget install --id $Id --silent --accept-package-agreements --accept-source-agreements 2>$errFile
-    $exitCode = $LASTEXITCODE
+    # Run winget in an isolated child process — prevents a crashed/cancelled installer
+    # from corrupting the winget environment for all subsequent installs
+    $proc = Start-Process -FilePath "winget" `
+        -ArgumentList "install --id $Id --silent --accept-package-agreements --accept-source-agreements" `
+        -NoNewWindow -Wait -PassThru -RedirectStandardError $errFile
+    $exitCode = $proc.ExitCode
 
     if ($exitCode -eq -1978335189) {
         Write-Host "  $Name is already installed, skipping." -ForegroundColor DarkYellow
@@ -37,8 +41,12 @@ function Install-App {
     } else {
         # Exit code 0 doesn't always mean success — verify the app is actually present
         # (clicking Cancel inside an installer dialog returns 0 to winget)
-        winget list --id $Id --exact --accept-source-agreements 2>$null | Out-Null
-        if ($LASTEXITCODE -ne 0) {
+        $listOut = [System.IO.Path]::GetTempFileName()
+        $listProc = Start-Process -FilePath "winget" `
+            -ArgumentList "list --id $Id --exact --accept-source-agreements" `
+            -NoNewWindow -Wait -PassThru -RedirectStandardOutput $listOut
+        Remove-Item $listOut -ErrorAction SilentlyContinue
+        if ($listProc.ExitCode -ne 0) {
             Write-Host "  $Name installation was cancelled. Skipping." -ForegroundColor DarkYellow
             Get-Process -Name "winget","msiexec" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
         }
