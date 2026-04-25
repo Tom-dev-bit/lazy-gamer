@@ -72,10 +72,6 @@ if (Ask "Do you torrent? (qBittorrent)") {
 if (Ask "Do you play Blizzard games? (Battle.net)") {
     Write-Host "`nNote: Battle.net may open a window asking you to choose an install directory." -ForegroundColor Yellow
     Install-App -Name "Battle.net" -Id "Blizzard.BattleNet"
-
-    if (Ask "Do you play World of Warcraft? (CurseForge)") {
-        Install-App -Name "CurseForge" -Id "Overwolf.CurseForge"
-    }
 }
 
 # ── Optional: Developer Tools 

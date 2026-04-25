@@ -54,5 +54,4 @@ Uses the built-in Windows Package Manager. No extra software needed.
 **Asked during setup:**
 - qBittorrent — only if you torrent
 - Battle.net — only if you play Blizzard games ⚠️ may prompt you to choose an install directory manually
-  - CurseForge — only if you play World of Warcraft
 - VS Code, Node.js, Windows Terminal, WSL2 — only if you're a developer
