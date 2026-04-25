@@ -79,10 +79,38 @@ if (Ask "Do you torrent? (qBittorrent)") {
 # ── Optional: Blizzard 
 if (Ask "Do you play Blizzard games? (Battle.net)") {
     Write-Host "`nNote: Battle.net may open a window asking you to choose an install directory." -ForegroundColor Yellow
-    Install-App -Name "Battle.net" -Id "battle.net"
+    Write-Host "`nDownloading Battle.net installer..." -ForegroundColor Cyan
+    $bnetInstaller = "$env:TEMP\BattleNetSetup.exe"
+    try {
+        Invoke-WebRequest -Uri "https://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=BATTLENET_APP" -OutFile $bnetInstaller -UseBasicParsing
+        Write-Host "Running Battle.net installer..." -ForegroundColor Cyan
+        Start-Process -FilePath $bnetInstaller -Wait
+        $exitCode = $LASTEXITCODE
+        if ($exitCode -ne 0) {
+            Write-Host "  Battle.net was skipped." -ForegroundColor DarkYellow
+            Get-Process -Name "Battle.net","Agent","BlizzardError","msiexec" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+        }
+    } catch {
+        Write-Host "  Failed to download Battle.net installer. Please install it manually from https://www.battle.net" -ForegroundColor Red
+    } finally {
+        Remove-Item $bnetInstaller -ErrorAction SilentlyContinue
+    }
 
     if (Ask "Do you play World of Warcraft? (CurseForge)") {
-        Install-App -Name "CurseForge" -Id "curseforge"
+        Write-Host "`nDownloading CurseForge installer..." -ForegroundColor Cyan
+        $curseInstaller = "$env:TEMP\CurseForgeSetup.exe"
+        try {
+            Invoke-WebRequest -Uri "https://curseforge.overwolf.com/downloads/curseforge-latest-installer.exe" -OutFile $curseInstaller -UseBasicParsing
+            Start-Process -FilePath $curseInstaller -Wait
+            $exitCode = $LASTEXITCODE
+            if ($exitCode -ne 0) {
+                Write-Host "  CurseForge was skipped." -ForegroundColor DarkYellow
+            }
+        } catch {
+            Write-Host "  Failed to download CurseForge installer. Please install it manually from https://www.curseforge.com/download/app" -ForegroundColor Red
+        } finally {
+            Remove-Item $curseInstaller -ErrorAction SilentlyContinue
+        }
     }
 }
 
