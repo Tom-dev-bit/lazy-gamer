@@ -25,30 +25,21 @@ function Install-App {
     )
     Write-Host "`nInstalling $Name..." -ForegroundColor Cyan
     $errFile = [System.IO.Path]::GetTempFileName()
-    # Run winget in an isolated child process — prevents a crashed/cancelled installer
-    # from corrupting the winget environment for all subsequent installs
-    $proc = Start-Process -FilePath "winget" `
-        -ArgumentList "install --id $Id --silent --accept-package-agreements --accept-source-agreements" `
-        -NoNewWindow -Wait -PassThru -RedirectStandardError $errFile
-    $exitCode = $proc.ExitCode
+    winget install --id $Id --silent --accept-package-agreements --accept-source-agreements 2>$errFile
+    $exitCode = $LASTEXITCODE
 
     if ($exitCode -eq -1978335189) {
         Write-Host "  $Name is already installed, skipping." -ForegroundColor DarkYellow
     } elseif ($exitCode -ne 0) {
-        # Non-zero usually means the user cancelled the installer dialog — just skip cleanly
         Write-Host "  $Name was skipped." -ForegroundColor DarkYellow
-        Get-Process -Name "winget","msiexec" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+        # Kill anything that could leave locks and corrupt subsequent winget calls
+        Get-Process -Name "winget","msiexec","Battle.net","Agent","BlizzardError" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
     } else {
-        # Exit code 0 doesn't always mean success — verify the app is actually present
-        # (clicking Cancel inside an installer dialog returns 0 to winget)
-        $listOut = [System.IO.Path]::GetTempFileName()
-        $listProc = Start-Process -FilePath "winget" `
-            -ArgumentList "list --id $Id --exact --accept-source-agreements" `
-            -NoNewWindow -Wait -PassThru -RedirectStandardOutput $listOut
-        Remove-Item $listOut -ErrorAction SilentlyContinue
-        if ($listProc.ExitCode -ne 0) {
+        # Verify the app actually installed — some installers cancel silently with exit code 0
+        winget list --id $Id --exact --accept-source-agreements 2>$null | Out-Null
+        if ($LASTEXITCODE -ne 0) {
             Write-Host "  $Name installation was cancelled. Skipping." -ForegroundColor DarkYellow
-            Get-Process -Name "winget","msiexec" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+            Get-Process -Name "winget","msiexec","Battle.net","Agent","BlizzardError" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
         }
     }
 
