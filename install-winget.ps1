@@ -1,12 +1,12 @@
 # ============================================================
-#  install.ps1 — Fresh Windows Setup Script
-#  Run with: powershell -ExecutionPolicy Bypass -File install.ps1
+#  install-winget.ps1 — Fresh Windows Setup Script (winget)
+#  Run with: powershell -ExecutionPolicy Bypass -File install-winget.ps1
 # ============================================================
 
 # Ensure running as Administrator
 $currentPrincipal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
 if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Write-Error "This script must be run as Administrator. Please re-run using run.bat or an elevated PowerShell session."
+    Write-Error "This script must be run as Administrator. Please re-run using START.vbs or an elevated PowerShell session."
     exit 1
 }
 
@@ -34,8 +34,6 @@ function Install-App {
         Write-Host "  $Name was skipped." -ForegroundColor DarkYellow
         # Kill anything that could leave locks and corrupt subsequent winget calls
         Get-Process -Name "winget","msiexec","Battle.net","Agent","BlizzardError" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-    } else {
-        # Exit code 0 = success, nothing to do
     }
 
     Remove-Item $errFile -ErrorAction SilentlyContinue

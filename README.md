@@ -11,8 +11,9 @@
 winget install Git.Git --silent --accept-package-agreements --accept-source-agreements
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 git clone https://github.com/Tom-dev-bit/lazy-gamer.git
-You can close the terminal window.
 ```
+
+You can close the terminal window.
 3. Navigate to the **lazy-gamer** folder (should be at `C:\Users\yourusername\lazy-gamer`)
 4. Double-click **`START.vbs`** and choose your installation method:
    - **[1] Chocolatey** — recommended, more reliable
@@ -38,7 +39,7 @@ Uses [Chocolatey](https://chocolatey.org/) as the package manager. Bootstrapped 
 
 ### winget
 Uses the built-in Windows Package Manager. No extra software needed.
-> ⚠️ **Note:** Cancelling an application's own installer window mid-way (e.g. Battle.net) may corrupt winget's process state and cause subsequent installs to fail with a "process has no package identity" error. If this happens, close the terminal and re-run `run.bat`.
+> ⚠️ **Note:** Cancelling an application's own installer window mid-way (e.g. Battle.net) may corrupt winget's process state and cause subsequent installs to fail with a "process has no package identity" error. If this happens, close the terminal and re-run `START.vbs`.
 
 ---
 

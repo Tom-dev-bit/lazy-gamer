@@ -6,7 +6,7 @@
 # Ensure running as Administrator
 $currentPrincipal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
 if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Write-Error "This script must be run as Administrator. Please re-run using run.bat or an elevated PowerShell session."
+    Write-Error "This script must be run as Administrator. Please re-run using START.vbs or an elevated PowerShell session."
     exit 1
 }
 
