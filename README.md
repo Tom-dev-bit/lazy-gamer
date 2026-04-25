@@ -13,9 +13,9 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 git clone https://github.com/Tom-dev-bit/lazy-gamer.git
 ```
 
-You can close the terminal window.
-3. Navigate to the **lazy-gamer** folder (should be at `C:\Users\yourusername\lazy-gamer`)
-4. Double-click **`START.vbs`** and choose your installation method:
+3. You can close the terminal window.
+4. Navigate to the **lazy-gamer** folder (should be at `C:\Users\yourusername\lazy-gamer`)
+5. Double-click **`START.vbs`** and choose your installation method:
    - **[1] Chocolatey** — recommended, more reliable
    - **[2] winget** — built into Windows, no extra installs needed
 5. Follow the prompts.
