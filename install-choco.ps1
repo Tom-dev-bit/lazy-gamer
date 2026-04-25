@@ -78,17 +78,22 @@ if (Ask "Do you torrent? (qBittorrent)") {
 
 # ── Optional: Blizzard 
 if (Ask "Do you play Blizzard games? (Battle.net)") {
-    Write-Host "`nNote: Battle.net may open a window asking you to choose an install directory." -ForegroundColor Yellow
-    Write-Host "`nDownloading Battle.net installer..." -ForegroundColor Cyan
-    $bnetInstaller = "$env:TEMP\BattleNetSetup.exe"
-    try {
-        Invoke-WebRequest -Uri "https://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=BATTLENET_APP" -OutFile $bnetInstaller -UseBasicParsing
-        Write-Host "Running Battle.net installer..." -ForegroundColor Cyan
-        Start-Process -FilePath $bnetInstaller -Wait
-    } catch {
-        Write-Host "  Failed to download Battle.net installer. Please install it manually from https://www.battle.net" -ForegroundColor Red
-    } finally {
-        Remove-Item $bnetInstaller -ErrorAction SilentlyContinue
+    $bnetInstalled = Get-ItemProperty "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Battle.net" -ErrorAction SilentlyContinue
+    if ($bnetInstalled) {
+        Write-Host "`n  Battle.net is already installed, skipping." -ForegroundColor DarkYellow
+    } else {
+        Write-Host "`nNote: Battle.net may open a window asking you to choose an install directory." -ForegroundColor Yellow
+        Write-Host "`nDownloading Battle.net installer..." -ForegroundColor Cyan
+        $bnetInstaller = "$env:TEMP\BattleNetSetup.exe"
+        try {
+            Invoke-WebRequest -Uri "https://www.battle.net/download/getInstallerForGame?os=win&locale=enUS&version=LIVE&gameProgram=BATTLENET_APP" -OutFile $bnetInstaller -UseBasicParsing
+            Write-Host "Running Battle.net installer..." -ForegroundColor Cyan
+            Start-Process -FilePath $bnetInstaller -Wait
+        } catch {
+            Write-Host "  Failed to download Battle.net installer. Please install it manually from https://www.battle.net" -ForegroundColor Red
+        } finally {
+            Remove-Item $bnetInstaller -ErrorAction SilentlyContinue
+        }
     }
 }
 
